@@ -3,9 +3,45 @@
 var id=2;
 var baseURL = window.location.origin;
 var filePath = "/helper/Routing.php";
+
+function checkEmail(){
+  var email = document.getElementById("customer_email").value;
+  //nsole.log(email);
+  $.ajax({
+    url: baseURL+filePath,
+    method: 'POST',
+    data: {
+      email: email
+    },
+    dataType: 'json',
+    success: function(is_verified){
+      if(is_verified != false){
+        console.log(is_verified);
+        document.getElementById('customer_id').value=is_verified[0]["id"];
+        $('#email_verify_fail').addClass('d-none');
+        $('#add_customer_btn').addClass('d-none');
+        $('#email_verify_success').removeClass('d-none');
+
+      }
+      else{
+        $('#email_verify_fail').removeClass('d-none');
+      $('#add_customer_btn').removeClass('d-none');
+      $('#email_verify_success').addClass('d-none');
+      }
+      
+
+}
+    
+  });
+}
+
 function deleteProduct(delete_id) {
     var elements = document.getElementsByClassName("product_row");
     if(elements.length > 1) {
+      var final_price = document.getElementById("final_rate_"+delete_id).value;
+    var final_total = document.getElementById("finalTotal").value;
+    console.log(final_price, final_total);
+    document.getElementById("finalTotal").value = final_total-final_price;
         $("#element_"+delete_id).remove();
     }
 }
@@ -82,7 +118,7 @@ function addProduct() {
                       <!--End final price-->
                       <!--Begin delete button-->
                       <div class="col-md-1">
-                          <button onclick="deleteProduct(1)"
+                          <button onclick="deleteProduct(${id})"
                           type="button"
                           class="btn btn-danger"
                           style="margin-top:40%"
@@ -150,10 +186,6 @@ $('#products_container').on('change', '.product_select',function(){
         },
         dataType: 'json',
         success: function(sellingprice){
-            console.log("HI");
-            console.log(sellingprice);
-            console.log(document.getElementById("selling_price_"+element_id).value);
-            document.getElementById("selling_price_"+element_id).value=0;
             document.getElementById("selling_price_"+element_id).value=sellingprice;
         }
 
@@ -162,6 +194,12 @@ $('#products_container').on('change', '.product_select',function(){
 
 $('#products_container').on('change','.quantity_ip', function(){
     var element_id = $(this).attr('id').split("_")[1];
+    if($(this).val()=="" || parseInt($(this).val()) <=0){
+      console.log("HI");
+      $(this).addClass("text-field-error");
+      return;
+    }
+    $(this).removeClass("text-field-error");
     //console.log(element_id, product_id);
     var sp=document.getElementById('selling_price_'+element_id).value;
     var q=document.getElementById('quantity_'+element_id).value;
@@ -192,6 +230,13 @@ $('#products_container').on('change','.quantity_ip', function(){
 $('#products_container').on('change','.discount_ip',function(){
     var element_id = $(this).attr('id').split("_")[1];
     //console.log(element_id, product_id);
+    if($(this).val()=="" || parseInt($(this).val()) <=0){
+      console.log("HI");
+      $(this).addClass("text-field-error");
+      return;
+    }
+    $(this).removeClass("text-field-error");
+    
     var sp=document.getElementById('selling_price_'+element_id).value;
     var q=document.getElementById('quantity_'+element_id).value;
     var total=document.getElementById('finalTotal').value;
@@ -220,3 +265,4 @@ $('#products_container').on('change','.discount_ip',function(){
         }
     })
 });
+

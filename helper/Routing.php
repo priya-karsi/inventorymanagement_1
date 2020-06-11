@@ -372,9 +372,36 @@ if(isset($_POST['getFinalRate'])){
 if(isset($_POST['getDiscountedFinalRate'])){
     $fr = $_POST['fr'];
     $disc=$_POST['disc'];
-    $val = $fr*(1-($disc/100));
-    echo json_encode($val);
+    echo json_encode($di->get('product')->getDiscountedPrice($fr, $disc));
 }
 
+if(isset($_POST['email'])){
+    $email = $_POST['email'];
+    echo json_encode($di->get('customer')->VerifyEmail($email));
+}
 
-
+if(isset($_POST['submit']))
+{
+    //ADDING SALES
+    if(isset($_POST['csrf_token']) && Util::verifyCSRFToken($_POST))
+    {
+        $result = $di->get('sales')->addSales($_POST);
+        switch($result)
+        {
+            case ADD_ERROR:
+                Session::setSession(ADD_ERROR, 'There was problem while inserting sales, please try again later!');
+                Util::redirect('add-sales.php');
+                break;
+            case ADD_SUCCESS:
+                Session::setSession(ADD_SUCCESS, 'The record have been added successfully!');
+                // Util::dd();
+                Util::redirect('view-sales.php');
+                break;
+            case VALIDATION_ERROR:
+                Session::setSession('errors', serialize($di->get('validator')->errors()));
+                Session::setSession('old', $_POST);
+                Util::redirect('add-sales.php');
+                break;
+        }
+    }
+}

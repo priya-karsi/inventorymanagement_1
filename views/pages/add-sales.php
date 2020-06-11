@@ -74,17 +74,17 @@ if(Session::hasSession('old'))
                 <p class="email-verify" id="email_verify_success">
                 <i class="fas fa-check fa-sm text-white mr-1"></i>Email Verified
                 </p>
-                <p class="email-verify bg-danger d-inline-block mb-0" id="email_verify_fail">
+                <p class="email-verify bg-danger mb-0" id="email_verify_fail">
                 <i class="fas fa-times fa-sm text-white mr-1"></i>Email not verified
                 </p>
 
                 <a href="<?=BASEPAGES;?>add-customer.php"
-                class="btn btn-sm btn-warning shadow-sm d-inline-block"
+                class="btn btn-sm btn-warning shadow-sm"
                 id="add_customer_btn"
           
                 ><i class="fas fa-users fa-sm text-white"></i>Add Customer</a>
-                <button type=button class="d-sm-inline-block btn btn-primary shadow-sm"
-                name="check_email">
+                <button type="button" onclick="checkEmail();" class="d-sm-inline-block btn btn-primary shadow-sm"
+                name="check_email" id="check_email">
                 <i class="fas fa-envelope fa-sm text-white"></i>Check Email                  
                 </button>
                 </div>
@@ -102,7 +102,7 @@ if(Session::hasSession('old'))
                 </div>
                 <!--END OF CARD HEADER-->
 
-              <form action="#" method="POST">
+              <form action="../../helper/Routing.php" method="POST">
                 <input type="hidden" name="csrf_token" value="<?=Session::getSession('csrf_token');?>">
                 <input type="text" name="customer_id" id="customer_id">
                 <div class="card-body">
@@ -204,7 +204,7 @@ if(Session::hasSession('old'))
                 <!-- begin card footer-->
                 <div class="d-flex card-footer justify-content-between">
                   <div>
-                  <input type="submit" class="btn btn-primary" name="add_category" value="submit">
+                  <input type="submit" class="btn btn-primary" name="submit" value="submit">
                         </div>
                   <div class="form-group row">
                     <label for="finalTotal" class="col-sm-4 col-form-label">Final Total</label>

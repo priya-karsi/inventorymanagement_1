@@ -225,4 +225,13 @@ BUTTONS;
             return DELETE_ERROR;
         }
     }
+
+    public function VerifyEmail($email){
+        if($this->database->exists('customers', ['email'=> $email])==true)
+            {
+                //return "HI";
+                return $this->database->readData('customers', ['id'], "email='{$email}' and deleted=0");
+            }
+        return false;
+    }
 }

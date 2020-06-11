@@ -196,19 +196,13 @@ BUTTONS;
     public function getProductsByCategoryID($category_id){
         return $this->database->readData('products', ['id', 'name'], "category_id={$category_id} and deleted=0");
     }
-    public function wefrom($product_id){
-        $wef= $this->database->readData('product_selling_rates', ['with_effect_from'], "product_id={$product_id}")[0]->{'with_effect_from'};
-        $today = date("Y-m-d");
-        //var_dump($wef);
-        $krr    = explode('-', $today);
-        $today = implode("", $krr);
-        
-        $diff=date_diff(date_create($today), date_create($wef),$absolute=true);
-        return $diff->invert;
+    
+    public function getDiscountedPrice($fr, $disc){
+        return $val = $fr*(1-($disc/100));
     }
-
     public function getSellingPriceByProductID($product_id){
         //return $this->wefrom($product_id);
-        return $this->database->readData('product_selling_rates', ['selling_price'], "product_id={$product_id} ", $readMode = PDO::FETCH_ASSOC)[0]['selling_price'];
+        $query = "SELECT t1.product_id, t1.selling_price, t1.with_effect_from FROM product_selling_rates  t1 INNER JOIN (SELECT product_id, selling_price, max(with_effect_from) as wef FROM product_selling_rates WHERE with_effect_from<=CURRENT_TIMESTAMP GROUP BY product_id and product_id={$product_id}) t2 ON t1.with_effect_from=t2.wef AND t1.product_id={$product_id}";
+        return $this->database->raw($query)[0]->selling_price;
     }
 }
