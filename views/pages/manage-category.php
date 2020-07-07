@@ -78,7 +78,7 @@ Util::createCSRFToken();
         </div>
         <form action="<?= BASEURL;?>helper/routing.php" method="POST">
           <div class="modal-body">
-            <input type="hidden" name="csrf_token" id="csrf_token" value="<?= Session::getSession('csrf_token');?>">
+            <input type="hidden" name="csrf_token" value="<?= Session::getSession('csrf_token');?>">
             <input type="hidden" name="category_id" id="category_id">
             <div class="form-group-row">
                 <label for="name" class="col-sm-12">Category Name</label>
@@ -108,7 +108,7 @@ Util::createCSRFToken();
         </div>
         <form action="<?= BASEURL;?>helper/routing.php" method="POST">
           <div class="modal-body">
-            <input type="hidden" name="csrf_token" id="csrf_token" value="<?= Session::getSession('csrf_token');?>">
+            <input type="hidden" name="csrf_token" value="<?= Session::getSession('csrf_token');?>">
             <input type="hidden" name="record_id" id="record_id">
             <p>Are you sure you want to delete this record?</p>
           </div>

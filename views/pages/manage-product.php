@@ -84,7 +84,7 @@ Util::createCSRFToken();
         </div>
         <form action="<?= BASEURL;?>helper/routing.php" method="POST">
           <div class="modal-body">
-            <input type="hidden" name="csrf_token" id="csrf_token" value="<?= Session::getSession('csrf_token');?>">
+            <input type="hidden" name="csrf_token" value="<?= Session::getSession('csrf_token');?>">
             <input type="hidden" name="product_id" id="product_id">
             <div class="form-group-row">
                 <label for="name" class="col-sm-12">Product Name</label>

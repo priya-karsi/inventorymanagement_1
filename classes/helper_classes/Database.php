@@ -59,7 +59,6 @@ class Database
         
         $sql = "INSERT INTO {$table} ({$fields}) VALUES ({$placeholders})";
         $this->stmt = $this->pdo->prepare($sql);
-        
         $this->stmt->execute($data);
         return $this->pdo->lastInsertId();
     }
@@ -121,6 +120,8 @@ class Database
             return false;
         }
     }
+
+
     
     public function beginTransaction()
     {

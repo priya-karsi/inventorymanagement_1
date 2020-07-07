@@ -49,7 +49,6 @@ Util::createCSRFToken();
                       <th>Customer GST Number</th>
                       <th>Customer Phone Number</th>
                       <th>Customer Email Id</th>
-                      <th>Customer Gender</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
@@ -85,6 +84,7 @@ Util::createCSRFToken();
           <div class="modal-body">
             <input type="hidden" name="csrf_token" id="csrf_token" value="<?= Session::getSession('csrf_token');?>">
             <input type="hidden" name="customer_id" id="customer_id">
+          
             <div class="form-group-row">
                 <label for="name" class="col-sm-12">Customer First Name</label>
                 <input type="text" class="form-control" id="customer_first_name" name="customer_first_name">
@@ -96,8 +96,6 @@ Util::createCSRFToken();
                 <input type="text" class="form-control" id="customer_phone_no" name="customer_phone_no">
                 <label for="name" class="col-sm-12">Customer Email Id</label>
                 <input type="text" class="form-control" id="customer_email_id" name="customer_email_id">
-                <label for="name" class="col-sm-12">Customer Gender</label>
-                <input type="text" class="form-control" id="customer_gender" name="customer_gender">
             </div>
           </div>
           <div class="modal-footer">

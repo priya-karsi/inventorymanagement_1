@@ -1,21 +1,21 @@
 var TableDataTables = function(){
-    var handleProductTable = function(){
-        var manageProductTable = $("#manage-product-datatable");
+    var handleSupplierTable = function(){
+        var manageSupplierTable = $("#manage-supplier-datatable");
         var baseURL = window.location.origin;
         var filePath = "/helper/routing.php";
-        var oTable = manageProductTable.dataTable({
+        var oTable = manageSupplierTable.dataTable({
             "processing": true,
             "serverSide":true,
             "ajax": {
                 url: baseURL + filePath,
                 method: "POST",
                 data: {
-                    "page": "manage_product"
+                    "page": "manage_supplier"
                 }
             },
             "lengthMenu": [
-                [5,10,20,-1],
-                [5,10,20,"All"]
+                [2,5,10,20,-1],
+                [2,5,10,20,"All"]
             ],
             "order": [
                 [1,"ASC"]
@@ -26,40 +26,37 @@ var TableDataTables = function(){
             }],
         });
         
-        manageProductTable.on('click','.edit',function(){
+        manageSupplierTable.on('click','.edit',function(){
             id = $(this).attr('id');
-            $("#product_id").val(id);
+            $("#supplier_id").val(id);
             $.ajax({
                 url: baseURL + filePath,
                 method: "POST",
                 data: {
-                    "product_id": id,
-                    "fetch": "product"
+                    "supplier_id": id,
+                    "fetch": "supplier"
                 },
                 dataType : "json",
                 success: function(data){
                     console.log(data);
-                    $("#product_name").val(data[0].name);
-                    $("#product_specification").val(data[0].specifications);
-                    $("#product_hsn_code").val(data[0].hsn_code);
-                    $("#product_category_id").val(data[0].category_id);
-                    $("#product_eoq_level").val(data[0].eoq_level);
-                    $("#product_danger_level").val(data[0].danger_level);
-                    $("#product_quantity").val(data[0].quantity);
-
+                    $("#supplier_first_name").val(data[0].first_name);
+                    $("#supplier_last_name").val(data[0].last_name);
+                    $("#supplier_gst_no").val(data[0].gst_no);
+                    $("#supplier_phone_no").val(data[0].phone_no);
+                    $("#supplier_email_id").val(data[0].email_id);
                 }
             });
         });
         
-        manageProductTable.on('click','.delete',function(){
+        manageSupplierTable.on('click','.delete',function(){
             id = $(this).attr('id');
             $("#record_id").val(id);
             $.ajax({
                 url: baseURL + filePath,
                 method: "POST",
                 data: {
-                    "product_id": id,
-                    "fetch": "product"
+                    "supplier_id": id,
+                    "fetch": "supplier"
                 },
                 dataType: "json",
                 success: function(data){
@@ -69,7 +66,7 @@ var TableDataTables = function(){
     }
     return{
         init: function(){
-            handleProductTable();
+            handleSupplierTable();
         }
     }
 }();

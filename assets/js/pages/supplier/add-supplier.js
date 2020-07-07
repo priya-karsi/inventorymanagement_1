@@ -1,5 +1,5 @@
 $(function(){
-    $("#add-customer").validate({
+    $("#add_supplier").validate({
         'rules': {
             'first_name':{
                 required: true,

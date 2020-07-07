@@ -14,8 +14,8 @@ var TableDataTables = function(){
                 }
             },
             "lengthMenu": [
-                [5,10,20,-1],
-                [5,10,20,"All"]
+                [2,5,10,20,-1],
+                [2,5,10,20,"All"]
             ],
             "order": [
                 [1,"ASC"]
@@ -39,7 +39,11 @@ var TableDataTables = function(){
                 dataType : "json",
                 success: function(data){
                     console.log(data);
-                    $("#customer_name").val(data[0].name);
+                    $("#customer_first_name").val(data[0].first_name);
+                    $("#customer_last_name").val(data[0].last_name);
+                    $("#customer_gst_no").val(data[0].gst_no);
+                    $("#customer_phone_no").val(data[0].phone_no);
+                    $("#customer_email_id").val(data[0].email_id);
                 }
             });
         });

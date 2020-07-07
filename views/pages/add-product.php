@@ -76,10 +76,10 @@ if (Session::hasSession('old')) {
                                                 <!--SPECIFICATIONS-->
                                                 <div class="form-group col-6">
                                                     <label for="specification">Specifications</label>
-                                                    <input type="text" name="specification" id="specification" class="form-control <?= $errors != '' && $errors->has('specification') ? 'error' : ''; ?>" placeholder="Enter Product Specifications" value="<?= $old != '' && isset($old['specification']) ? $old['specification'] : ''; ?>" />
+                                                    <input type="text" name="specifications" id="specifications" class="form-control <?= $errors != '' && $errors->has('specification') ? 'error' : ''; ?>" placeholder="Enter Product Specifications" value="<?= $old != '' && isset($old['specification']) ? $old['specification'] : ''; ?>" />
                                                     <?php
-                                                    if ($errors != "" && $errors->has('specification')) {
-                                                        echo "<span class='error'>{$errors->first('specification')}</span>";
+                                                    if ($errors != "" && $errors->has('specifications')) {
+                                                        echo "<span class='error'>{$errors->first('specifications')}</span>";
                                                     }
                                                     ?>
                                                 </div>

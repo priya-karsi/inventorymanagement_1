@@ -6,7 +6,7 @@ var filePath = "/helper/Routing.php";
 
 function checkEmail(){
   var email = document.getElementById("customer_email").value;
-  //nsole.log(email);
+  //console.log(email);
   $.ajax({
     url: baseURL+filePath,
     method: 'POST',
@@ -15,6 +15,7 @@ function checkEmail(){
     },
     dataType: 'json',
     success: function(is_verified){
+        console.log(is_verified);
       if(is_verified != false){
         console.log(is_verified);
         document.getElementById('customer_id').value=is_verified[0]["id"];

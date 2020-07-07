@@ -21,34 +21,31 @@ class Customer{
                 'required' => true,
                 'minlength' => 2,
                 'maxlength' => 255,
-                'unique' => $this->table
+                //'unique' => $this->table
             ],
             'last_name' => [
                 'required' => true,
                 'minlength' => 2,
                 'maxlength' => 255,
-                'unique' => $this->table
+                //'unique' => $this->table
             ],
             'phone_no' => [
                 'required' => true,
                 'minlength' => 10,
                 'maxlength' => 10,
-                'unique' => $this->table
+                //'unique' => $this->table
             ],
             'email_id' => [
                 'required' => true,
                 'minlength' => 2,
                 'maxlength' => 255,
-                'unique' => $this->table
-            ],
-            'gender' => [
-                'required' => true
+                //'unique' => $this->table
             ],
             'gst_no' => [
                 'required' => true,
                 'minlength' => 10,
                 'maxlength' => 10,
-                'unique' => $this->table
+                //'unique' => $this->table
             ]
         ]);
     }
@@ -72,25 +69,26 @@ class Customer{
                     'gst_no' => $data['gst_no'],
                     'phone_no' => $data['phone_no'],
                     'email_id' => $data['email_id'],
-                    'gender' => $data['gender']
+                    
 
                 ];
                 $customer_id = $this->database->insert($this->table, $data_to_be_inserted);
+                //Util::dd($customer_id);
                 $data_to_be_inserted = [
                     'street' => $data['street'],
                     'city' => $data['city'],
                     'pincode' => $data['pincode'],
                     'state' => $data['state'],
                     'country' => $data['country'],
-                    'town' => $data['town'],
                     'block_no' => $data['block_no']
                 ];
-                $address_id = $this->database->insert("address",$data_to_be_inserted);
+                $address_id = $this->database->insert('addresses',$data_to_be_inserted);
+                //Util::dd($address_id);
                 $data_to_be_inserted = [
-                    'address_id' => $address_id, 
+                    'add_id' => $address_id, 
                     'customer_id' => $customer_id
                 ];
-                $address_customer_id = $this->database->insert("address_customer",$data_to_be_inserted);
+                $address_customer_id = $this->database->insert("coustomer_addresses",$data_to_be_inserted);
                 $this->database->commit();
                 return ADD_SUCCESS;
             }
@@ -109,15 +107,15 @@ class Customer{
     }
     public function getJSONDataForDataTable($draw,$searchParameter,$orderBy,$start,$length)
     {
-        $columns = ["sr_no","first_name","last_name","gst_no", "phone_no", "email_id", "gender"];
+        $columns = ["sr_no","first_name","last_name","gst_no", "phone_no", "email_id"];
         $totalRowCountQuery = "SELECT COUNT(id) as total_count FROM {$this->table} WHERE deleted=0";
         $filteredRowCountQuery = "SELECT COUNT(id) as filtered_total_count FROM {$this->table} WHERE deleted=0";
         $query = "SELECT * FROM {$this->table} WHERE deleted=0";
         
         if($searchParameter!=null)
         {
-            $query .= " AND first_name like '%{$searchParameter}%' OR last_name like '%{$searchParameter}%' OR gst_no like '%{$searchParameter}%' OR phone_no like '%{$searchParameter}%' OR email_id like '%{$searchParameter}%' OR gender like '%{$searchParameter}%'";
-            $filteredRowCountQuery .= " AND first_name like '%{$searchParameter}%' OR last_name like '%{$searchParameter}%' OR gst_no like '%{$searchParameter}%' OR phone_no like '%{$searchParameter}%' OR email_id like '%{$searchParameter}%' OR gender like '%{$searchParameter}%'";
+            $query .= " AND first_name like '%{$searchParameter}%' OR last_name like '%{$searchParameter}%' OR gst_no like '%{$searchParameter}%' OR phone_no like '%{$searchParameter}%' OR email_id like '%{$searchParameter}%'";
+            $filteredRowCountQuery .= " AND first_name like '%{$searchParameter}%' OR last_name like '%{$searchParameter}%' OR gst_no like '%{$searchParameter}%' OR phone_no like '%{$searchParameter}%' OR email_id like '%{$searchParameter}%'";
         }
         if($orderBy != null)
         {
@@ -150,7 +148,6 @@ class Customer{
             $subarray[] = $filteredData[$i]->gst_no;
             $subarray[] = $filteredData[$i]->phone_no;
             $subarray[] = $filteredData[$i]->email_id;
-            $subarray[] = $filteredData[$i]->gender;
             $subarray[] = <<<BUTTONS
             <button class='edit btn btn-outline-primary' id='{$filteredData[$i]->id}' data-toggle="modal" data-target="#editModal"><i class='fas fa-pencil-alt'></i></button>
             <button class='delete btn btn-outline-danger' id='{$filteredData[$i]->id}' data-toggle="modal" data-target="#deleteModal"><i class='fas fa-trash'></i></button>
@@ -179,20 +176,26 @@ BUTTONS;
     public function update($data,$id)
     {
         $validationData['first_name'] = $data['customer_first_name'];
-    //    $validationData['last_name'] = $data['customer_last_name'];
-    //    $validationData['gst_no'] = $data['customer_gst_no'];
+       $validationData['last_name'] = $data['customer_last_name'];
+       $validationData['gst_no'] = $data['customer_gst_no'];
+       $validationData['phone_no'] = $data['customer_phone_no'];
+       $validationData['email_id'] = $data['customer_email_id'];
+
+    //    Util::dd($validationData);
         $validation = $this->validateData($validationData);
+        //Util::dd($validation->fails());
         if(!$validation->fails())
         {
             try{
+                
                 $this->database->beginTransaction();
-            //    Util::dd($validationData);
+                
                 $filteredData['first_name'] = $data['customer_first_name'];
-                // $filteredData['last_name'] = $data['customer_last_name'];
-                // $filteredData['gst_no'] = $data['customer_gst_no'];
-                // $filteredData['phone_no'] = $data['customer_phone_no'];
-                // $filteredData['email_id'] = $data['customer_email_id'];
-                // $filteredData['gender'] = $data['customer_gender'];
+                $filteredData['last_name'] = $data['customer_last_name'];
+                $filteredData['gst_no'] = $data['customer_gst_no'];
+                $filteredData['phone_no'] = $data['customer_phone_no'];
+                $filteredData['email_id'] = $data['customer_email_id'];
+                
                 $this->database->update($this->table,$filteredData,"id={$id}");
                 $this->database->commit();
                 return EDIT_SUCCESS;
@@ -227,10 +230,10 @@ BUTTONS;
     }
 
     public function VerifyEmail($email){
-        if($this->database->exists('customers', ['email'=> $email])==true)
+        if($this->database->exists('customers', ['email_id'=> $email])==true)
             {
                 //return "HI";
-                return $this->database->readData('customers', ['id'], "email='{$email}' and deleted=0");
+                return $this->database->readData('customers', ['id'], "email_id='{$email}' and deleted=0");
             }
         return false;
     }

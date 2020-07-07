@@ -33,7 +33,7 @@ if(Session::hasSession('old'))
           line-height: 1.5;
           border-radius: .2rem;
           vertical-align:middle;
-          /*display: none !important;*/
+          display: none ;
       }
 </style>
   <!--PLACE TO ADD YOUR CUSTOM CSS-->

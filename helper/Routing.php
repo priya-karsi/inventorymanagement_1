@@ -4,6 +4,7 @@ require_once 'init.php';
 if(isset($_POST['add_category']))
 {
     //USER HAS REQUESTED TO ADD A NEW CATEGORY
+    
     if(isset($_POST['csrf_token']) && Util::verifyCSRFToken($_POST))
     {
         $result = $di->get('category')->addCategory($_POST);
@@ -30,6 +31,7 @@ if(isset($_POST['add_category']))
 if(isset($_POST['add_customer']))
 {
     //USER HAS REQUESTED TO ADD A NEW CUSTOMER
+    //Util::dd($_POST);
     if(isset($_POST['csrf_token']) && Util::verifyCSRFToken($_POST))
     {
         $result = $di->get('customer')->addCustomer($_POST);
@@ -140,6 +142,7 @@ if(isset($_POST['delete_category']))
 }
 if(isset($_POST['page']) && $_POST['page'] == 'manage_customer')
 {
+    //Util::dd($_POST);
     $search_parameter = $_POST['search']['value'] ?? null;
     $order_by = $_POST['order'] ?? null;
     $start = $_POST['start'];
@@ -324,7 +327,7 @@ if(isset($_POST['delete_product']))
 
 if(isset($_POST['add_product']))
 {
-    //USER HAS REQUESTED TO ADD A NEW CATEGORY
+    //USER HAS REQUESTED TO ADD A NEW PRODUCT
     if(isset($_POST['csrf_token']) && Util::verifyCSRFToken($_POST))
     {
         $result = $di->get('product')->addProduct($_POST);
@@ -401,6 +404,98 @@ if(isset($_POST['submit']))
                 Session::setSession('errors', serialize($di->get('validator')->errors()));
                 Session::setSession('old', $_POST);
                 Util::redirect('add-sales.php');
+                break;
+        }
+    }
+}
+
+if(isset($_POST['add_supplier']))
+{
+    //USER HAS REQUESTED TO ADD A NEW CUSTOMER
+    //Util::dd($_POST);
+    if(isset($_POST['csrf_token']) && Util::verifyCSRFToken($_POST))
+    {
+        $result = $di->get('supplier')->addSupplier($_POST);
+        switch($result)
+        {
+            case ADD_ERROR:
+                Session::setSession(ADD_ERROR, 'There was problem while inserting record, please try again later!');
+                Util::redirect('manage-supplier.php');
+                break;
+            case ADD_SUCCESS:
+                Session::setSession(ADD_SUCCESS, 'The record have been added successfully!');
+                // Util::dd();
+                Util::redirect('manage-supplier.php');
+                break;
+            case VALIDATION_ERROR:
+                Session::setSession('errors', serialize($di->get('validator')->errors()));
+                Session::setSession('old', $_POST);
+                Util::redirect('add-supplier.php');
+                break;
+        }
+    }
+}
+
+if(isset($_POST['page']) && $_POST['page'] == 'manage_supplier')
+{
+    //Util::dd($_POST);
+    $search_parameter = $_POST['search']['value'] ?? null;
+    $order_by = $_POST['order'] ?? null;
+    $start = $_POST['start'];
+    $length = $_POST['length'];
+    $draw = $_POST['draw'];
+    $di->get('supplier')->getJSONDataForDataTable($draw,$search_parameter,$order_by,$start,$length);
+}
+
+if(isset($_POST['fetch']) && $_POST['fetch'] == 'supplier')
+{
+    $supplier_id = $_POST['supplier_id'];
+    $result = $di->get('supplier')->getSupplierById($supplier_id,PDO::FETCH_ASSOC);
+//    Util::dd($result);
+    echo json_encode($result);
+}
+
+if(isset($_POST['edit_supplier']))
+{
+    if(isset($_POST['csrf_token']) && Util::verifyCSRFToken($_POST))
+    {
+        $result = $di->get('supplier')->update($_POST,$_POST['supplier_id']);
+        switch($result)
+        {
+            case EDIT_ERROR:
+                Session::setSession(EDIT_ERROR, 'There was problem while editing record, please try again later!');
+                Util::redirect('manage-supplier.php');
+                break;
+            case EDIT_SUCCESS:
+                Session::setSession(EDIT_SUCCESS, 'The record has been added successfully!');
+                // Util::dd();
+                Util::redirect('manage-supplier.php');
+                break;
+            case VALIDATION_ERROR:
+                Session::setSession('errors', serialize($di->get('validator')->errors()));
+                Session::setSession('old', $_POST);
+                Util::redirect('manage-supplier.php');
+                break;
+        }
+    }
+}
+
+if(isset($_POST['delete_supplier']))
+{
+    if(isset($_POST['csrf_token']) && Util::verifyCSRFToken($_POST))
+    {
+//        Util::dd($_POST['record_id']);
+        $result = $di->get('supplier')->delete($_POST['record_id']);
+        switch($result)
+        {
+            case DELETE_ERROR:
+                Session::setSession(DELETE_ERROR, 'There was problem while deleting record, please try again later!');
+                Util::redirect('manage-supplier.php');
+                break;
+            case DELETE_SUCCESS:
+                Session::setSession(DELETE_SUCCESS, 'The record has been deleted successfully!');
+                // Util::dd();
+                Util::redirect('manage-supplier.php');
                 break;
         }
     }

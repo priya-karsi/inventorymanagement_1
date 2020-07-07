@@ -41,9 +41,7 @@ class Employee{
                 'maxlength' => 255,
                 'unique' => $this->table
             ],
-            'gender' => [
-                'required' => true
-            ]
+            
         ]);
     }
     /**
