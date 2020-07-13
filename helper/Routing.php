@@ -1,4 +1,7 @@
 <?php
+
+use Carbon\Carbon;
+
 require_once 'init.php';
 
 if(isset($_POST['add_category']))
@@ -279,6 +282,8 @@ if(isset($_POST['fetch']) && $_POST['fetch'] == 'product')
 //    Util::dd($result);
     echo json_encode($result);
 }
+
+
 if(isset($_POST['edit_product']))
 {
     if(isset($_POST['csrf_token']) && Util::verifyCSRFToken($_POST))
@@ -383,7 +388,57 @@ if(isset($_POST['email'])){
     echo json_encode($di->get('customer')->VerifyEmail($email));
 }
 
-if(isset($_POST['submit']))
+if(isset($_POST['editSellingPrice'])){
+    $product_id = $_POST['product_id'];
+    $new_sp = $_POST['new_sp'];
+    $wef = Carbon::now()->format('Y/m/d H:i:s');
+    echo json_encode($di->get('product')->editSellingPrice($product_id, $new_sp, $wef));
+}
+
+if(isset($_POST['getSuppliers'])){
+    echo json_encode($di->get('supplier')->all());
+}
+
+if(isset($_POST['getCategoriesBySupplierId'])){
+    //echo json_encode("HI");
+    $id=$_POST['supplierId'];
+    echo json_encode($di->get('category')->getCategoriesBySupplierId($id));
+}
+
+if(isset($_POST['getProductsByCategoryIDandSupplierID'])){
+    $s_id = $_POST['supplierId'];
+    $c_id = $_POST['categoryId'];    
+    echo json_encode($di->get('category')->getProductsByCategoryIDandSupplierID($c_id, $s_id));
+}
+
+if(isset($_POST['confirm-purchase']))
+{
+    //ADDING SALES
+    if(isset($_POST['csrf_token']) && Util::verifyCSRFToken($_POST))
+    {
+        $result = $di->get('purchase')->addPurchase($_POST);
+        switch($result)
+        {
+            case ADD_ERROR:
+                Session::setSession(ADD_ERROR, 'There was problem while inserting sales, please try again later!');
+                Util::redirect('add-purchase.php');
+                break;
+            case ADD_SUCCESS:
+                Session::setSession(ADD_SUCCESS, 'The record have been added successfully!');
+                // Util::dd();
+                Util::redirect('add-purchase.php');
+                break;
+            case VALIDATION_ERROR:
+                Session::setSession('errors', serialize($di->get('validator')->errors()));
+                Session::setSession('old', $_POST);
+                Util::redirect('add-purchase.php');
+                break;
+        }
+    }
+}
+
+
+if(isset($_POST['confirm']))
 {
     //ADDING SALES
     if(isset($_POST['csrf_token']) && Util::verifyCSRFToken($_POST))
@@ -409,6 +464,73 @@ if(isset($_POST['submit']))
     }
 }
 
+
+if(isset($_GET['session_id'])){
+    \Stripe\Stripe::setApiKey('sk_test_51H1CK7EDb3WIdKcX7KeoXjGoaYoVKwnDnJkeIgtoBIvEmahxc8j4eqKw98DxV1krqONc1MCcBY4u9KNI8xfhfk5u00I9PW3ahN');
+
+$stripe = new \Stripe\StripeClient(
+    'sk_test_51H1CK7EDb3WIdKcX7KeoXjGoaYoVKwnDnJkeIgtoBIvEmahxc8j4eqKw98DxV1krqONc1MCcBY4u9KNI8xfhfk5u00I9PW3ahN'
+  );
+ $session= $stripe->checkout->sessions->retrieve(
+      $_GET['session_id']
+      
+  );
+//   Util::dd($_REQUEST);
+  Util::dd($session);
+  $pm=$stripe->paymentMethods->create([
+    'type' => $session['payment_method_types'][0],
+    $session['payment_method_types'][0] => [
+      'number' => '4242424242424242',
+      'exp_month' => 7,
+      'exp_year' => 2021,
+      'cvc' => '314',
+    ],
+  ]);
+$customer = \Stripe\Customer::create([
+  'name' => 'jenny rosen',
+  'email' => 'priya.karsi1918@gmail.com',
+  'address' => [
+      'city'=>'unr',
+      'country'=>'BY',
+      'line1'=>'line1'
+  ],
+  'payment_method'=>$pm->id,
+  'description' => 'My First Test Customer (created for API docs)'
+]);
+
+//var_dump($customer);
+$stripe = new \Stripe\StripeClient(
+    'sk_test_51H1CK7EDb3WIdKcX7KeoXjGoaYoVKwnDnJkeIgtoBIvEmahxc8j4eqKw98DxV1krqONc1MCcBY4u9KNI8xfhfk5u00I9PW3ahN'
+  );
+  $product=$stripe->products->create([
+    'name' => 'Gold Special',
+  ]);
+  
+
+\Stripe\InvoiceItem::create([
+    'customer' => $customer->id,
+    // 'price' => 'price_CBb6IXqvTLXp3f',
+    //'payment_method_types' => ['card'],
+    'price_data' => [
+        'currency' => 'usd',
+        'product' => $product->id,
+        'unit_amount' => 2000,
+      ],
+  ]);
+  
+  $invoice = \Stripe\Invoice::create([
+    'customer' => $customer->id,
+    'collection_method' => 'send_invoice',
+    'days_until_due' => 1,
+    'auto_advance' => true, /* auto-finalize this draft after ~1 hour */
+  ]);
+
+$invoice->finalizeInvoice();
+
+$stripe->invoices->sendInvoice(
+    $invoice->id,
+  );
+}
 if(isset($_POST['add_supplier']))
 {
     //USER HAS REQUESTED TO ADD A NEW CUSTOMER
@@ -499,4 +621,8 @@ if(isset($_POST['delete_supplier']))
                 break;
         }
     }
+}
+
+if(isset($_POST['monthly']) && isset($_POST['fetch']) && $_POST['fetch']==='monthly'){
+    
 }

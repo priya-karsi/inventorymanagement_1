@@ -1,5 +1,7 @@
 <?php
 
+use Stripe\Terminal\Location;
+
 require_once __DIR__."/../helper/requirements.php";
 
 class Product{
@@ -60,6 +62,8 @@ class Product{
                 $data_to_be_inserted = [];
                 $data_to_be_inserted['product_id'] = $product_id;
                 $data_to_be_inserted['selling_rate'] = $data['selling_rate'];
+                $data_to_be_inserted['with_effect_from'] = Carbon\Carbon::now()->format('Y/m/d H:i:s');
+                //Util::dd($data_to_be_inserted);
                 $this->database->insert('product_selling_rates', $data_to_be_inserted);
                 $this->database->commit();
                 return ADD_SUCCESS;
@@ -218,7 +222,33 @@ BUTTONS;
     }
     public function getSellingPriceByProductID($product_id){
         //return $this->wefrom($product_id);
-        $query = "SELECT t1.product_id, t1.selling_rate, t1.with_effect_from FROM product_selling_rates  t1 INNER JOIN (SELECT product_id, selling_rate, max(with_effect_from) as wef FROM product_selling_rates WHERE with_effect_from<=CURRENT_TIMESTAMP GROUP BY product_id and product_id={$product_id}) t2 ON t1.with_effect_from=t2.wef AND t1.product_id={$product_id}";
+        //$query = "SELECT t1.product_id, t1.selling_rate, t1.with_effect_from FROM product_selling_rates  t1 INNER JOIN (SELECT product_id, selling_rate, max(with_effect_from) as wef FROM product_selling_rates WHERE with_effect_from<=GETDATE() GROUP BY product_id and product_id={$product_id}) t2 ON t1.with_effect_from=t2.wef AND t1.product_id={$product_id}";
+        $query="SELECT * FROM product_selling_rates WHERE with_effect_from = (SELECT MAX(with_effect_from) FROM product_selling_rates WHERE product_id ={$product_id} AND with_effect_from <= CURRENT_TIMESTAMP) AND product_id ={$product_id} ";
         return $this->database->raw($query)[0]->selling_rate;
+    }
+
+    public function getProductDetailsByID($id) {
+        return $this->di->get('database')->raw("SELECT * FROM products WHERE id={$id} AND deleted = 0");
+    }
+
+    public function editSellingPrice($product_id, $new_sp, $wef){
+        //Util::dd($new_sp);
+        try{
+            $this->database->beginTransaction();
+            $data_to_be_inserted=[];
+            $data_to_be_inserted['product_id']=$product_id;
+            $data_to_be_inserted['selling_rate']=$new_sp;
+            $data_to_be_inserted['with_effect_from']=$wef;
+            $insert_id = $this->database->insert('product_selling_rates',$data_to_be_inserted);
+            $this->database->commit();
+            //Util::dd($insert_id);
+            return $insert_id;
+            //Util::dd($_SERVER);
+            //Util::redirect($_SERVER['HTTP_REFERER']);
+        }catch(Exception $e){
+//            Util::dd($e);
+            $this->database->rollback();
+            return ADD_ERROR;
+        }
     }
 }

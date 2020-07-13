@@ -161,4 +161,18 @@ BUTTONS;
     public function all(){
         return $this->database->readData($this->table, [], "deleted=0");
     }
+
+    public function getCategoriesBySupplierId($id, $mode=PDO::FETCH_OBJ){
+        $query="SELECT name, id FROM category WHERE id in (SELECT category_id as cid FROM product_suppliers as ps inner join products as p on ps.product_id=p.id WHERE supplier_id={$id} and p.deleted=0 GROUP BY category_id)";
+        //Util::dd($query);
+        $result = $this->database->raw($query,$mode);
+        return $result;
+    }
+
+    public function getProductsByCategoryIDandSupplierID($category_id, $supplier_id, $mode=PDO::FETCH_OBJ){
+        $query = "SELECT category_id as cid, p.id, p.name FROM product_suppliers as ps inner join products as p on ps.product_id=p.id WHERE supplier_id={$supplier_id} and p.deleted=0 and category_id={$category_id} GROUP BY p.id";
+        $result = $this->database->raw($query,$mode);
+        //Util::dd($result);
+        return $result;
+    }
 }

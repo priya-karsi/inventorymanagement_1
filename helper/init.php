@@ -15,6 +15,7 @@ $di->set('employee', new Employee($di));
 $di->set('product', new Product($di));
 $di->set('address', new Address($di));
 $di->set('sales', new Sales($di));
+$di->set('purchase', new Purchase($di));
 
 // $di->set('product', new Product($di));
 $di->set('supplier', new Supplier($di));

@@ -143,7 +143,7 @@ $sidebarSubSection = "";
                 <!-- Card Body -->
                 <div class="card-body">
                   <div class="chart-area">
-                    <canvas id="myAreaChart"></canvas>
+                    <canvas id="monthly-chart"></canvas>
                   </div>
                 </div>
               </div>
@@ -336,7 +336,7 @@ $sidebarSubSection = "";
   <!-- Page level custom scripts -->
   <script src="<?= BASEASSETS?>js/demo/chart-area-demo.js"></script>
   <script src="<?= BASEASSETS?>js/demo/chart-pie-demo.js"></script>
-
+  <script src="<?= BASEASSETS?>js/helper/helperfunction.js"></script>
 </body>
 
 </html>

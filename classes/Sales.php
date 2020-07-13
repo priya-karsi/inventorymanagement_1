@@ -62,8 +62,9 @@ class Sales{
                     ];
                 $sales_id = $this->database->insert('sales', $data_to_be_inserted);
                 $this->database->commit();
-                return ADD_SUCCESS;
+                
                 }
+                return ADD_SUCCESS;
             }
             catch(Exception $e){
                 $this->database->rollback();

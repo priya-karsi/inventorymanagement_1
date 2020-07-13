@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../../helper/init.php';
-$pageTitle = "Easy ERP | Add Category";
+$pageTitle = "Easy ERP | Add Sales";
 $sidebarSection = "transaction";
 $sidebarSubSection = "sales";
 Util::createCSRFToken();
@@ -150,6 +150,8 @@ if(Session::hasSession('old'))
                       </div>
                       <!--End selling price-->
 
+                      
+
                       <!--Begin quantity -->
                       <div class="col-md-1">
                           <div class="form-group">
@@ -160,6 +162,7 @@ if(Session::hasSession('old'))
                           </div>
                       </div>
                       <!--End quantity -->
+                      
                       <!--Begin discount -->
                       <div class="col-md-1">
                           <div class="form-group">
@@ -169,7 +172,6 @@ if(Session::hasSession('old'))
                           </div>
                       </div>
                       <!--End discount -->
-                      
                       <!--Begin final rate -->
                       <div class="col-md-2">
                           <div class="form-group">
@@ -204,7 +206,7 @@ if(Session::hasSession('old'))
                 <!-- begin card footer-->
                 <div class="d-flex card-footer justify-content-between">
                   <div>
-                  <input type="submit" class="btn btn-primary" name="submit" value="submit">
+                  <input type="submit" class="btn btn-primary" name="confirm" value="submit">
                         </div>
                   <div class="form-group row">
                     <label for="finalTotal" class="col-sm-4 col-form-label">Final Total</label>

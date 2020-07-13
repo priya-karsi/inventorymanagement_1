@@ -229,5 +229,9 @@ BUTTONS;
         }
     }
 
+    public function all(){
+        return $this->database->readData($this->table, [], "deleted=0");
+    }
+
     
 }

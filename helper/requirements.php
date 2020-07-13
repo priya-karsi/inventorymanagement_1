@@ -18,3 +18,9 @@ require_once("$app/../classes/Employee.php");
 require_once("$app/../classes/Address.php");
 require_once("$app/../classes/Sales.php");
 require_once("$app/../classes/Supplier.php");
+require_once("$app/../classes/Purchase.php");
+
+
+require_once("$app/../vendor/autoload.php");
+
+
